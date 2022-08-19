@@ -26,7 +26,7 @@ class BasicAuthentication(BaseAuthentication):
 
         if len(auth) == 1:
             raise exceptions.AuthenticationFailed(
-                "Invalid basic header. No credntials provided"
+                "Invalid basic header. No credentials provided"
             )
         if len(auth) > 2:
             raise exceptions.AuthenticationFailed(
@@ -49,7 +49,7 @@ class BasicAuthentication(BaseAuthentication):
 
         if user is None:
             raise exceptions.AuthenticationFailed(
-                "Invalid username or passwordoooooooo"
+                "Invalid username or password"
             )
         if not user.is_active:
             raise exceptions.AuthenticationFailed("User is inactive")

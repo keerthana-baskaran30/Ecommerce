@@ -5,10 +5,10 @@ from . import views
 urlpatterns = [
     path("ecommerce/login", views.LoginView.as_view()),
     path("ecommerce/customer/register", views.UserRegisterView.as_view()),
-    path("ecommerce/product/", views.ListProducts.as_view(), name="products"),
-    path("ecommerce/product/pid/", views.DetailProducts.as_view(), name="dproduct"),
+    path("ecommerce/product/", views.ListProducts.as_view()),
+    path("ecommerce/product/pid/", views.DetailProducts.as_view()),
     path(
-        "ecommerce/product/category/", views.DetailCategory.as_view(), name="dcategory"
+        "ecommerce/product/category/", views.DetailCategory.as_view()
     ),
     path("ecommerce/cart/add", views.CartAddView.as_view()),
     path("ecommerce/cartitems/", views.DetailCart.as_view()),

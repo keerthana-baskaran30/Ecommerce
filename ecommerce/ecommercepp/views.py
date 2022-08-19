@@ -20,14 +20,15 @@ def get_function(user_obj, value):
         try:
             seller_obj = Seller.objects.get(auth_id=user_obj.id)
             return seller_obj
-        except Seller.DoesNotExist:
-            raise Http404
+        except Seller.DoesNotExist as exception:
+            raise Http404 from exception
     elif value == "customer":
         try:
             cust_obj = Customer.objects.get(auth_id=user_obj.id)
             return cust_obj
-        except Customer.DoesNotExist:
-            raise Http404
+        except Customer.DoesNotExist as exception:
+            raise Http404 from exception
+    return None
 
 
 class LoginView(generics.GenericAPIView):
@@ -36,11 +37,11 @@ class LoginView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = LoginViewSerializer
 
-    def get_object(self, username):
+    def get_object(self, username=None):
         try:
             return User.objects.get(username=username)
-        except User.DoesNotExist:
-            raise Http404
+        except User.DoesNotExist as exception:
+            raise Http404 from exception
 
     def post(self, request):
         user_data = self.get_object(request.user.username)
@@ -187,6 +188,7 @@ class SellerDisplayView(generics.ListAPIView):
         if seller_id is not None:
             queryset = Product.objects.filter(seller_id=seller_id)
             return queryset
+        return None
 
 
 class CartAddView(generics.CreateAPIView):
@@ -234,6 +236,8 @@ class CartAddView(generics.CreateAPIView):
                         cart_value.save()
                         return Response("added", status=status.HTTP_201_CREATED)
                 else:
+                    if int(qty) <= 0:
+                        return Response("Negative quantity")
                     cart_item = {
                         pid: {
                             "pid": pid,

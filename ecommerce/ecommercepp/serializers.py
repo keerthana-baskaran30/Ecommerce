@@ -10,7 +10,7 @@ from ecommercepp.models import Product, Cart, Customer, Seller
 class LoginViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email"]
+        fields = ["id", "username", "email","first_name"]
 
 
 # register
@@ -21,7 +21,11 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
     )
-    phone = serializers.CharField(max_length=10,validators=[UniqueValidator(queryset=Customer.objects.all())]
+    phone = serializers.CharField(
+        max_length=10, validators=[UniqueValidator(queryset=Customer.objects.all())]
+    )
+    phone = serializers.CharField(
+        max_length=10, validators=[UniqueValidator(queryset=Seller.objects.all())]
     )
     sex = serializers.CharField(max_length=1)
     address = serializers.CharField(max_length=5000)
@@ -115,11 +119,11 @@ class SellerAddViewSerializer(serializers.ModelSerializer):
             pcategory=validated_data["pcategory"],
             seller_id=sellerobj["seller"],
         )
-        pdt.save()
+        # pdt.save()
         return pdt
 
     def update(self, instance, validated_data):
-        print(validated_data)
+        # print(validated_data)
         instance.pid = validated_data.get("pid", instance.pid)
         instance.pname = validated_data.get("pname", instance.pname)
         instance.pdescription = validated_data.get(
