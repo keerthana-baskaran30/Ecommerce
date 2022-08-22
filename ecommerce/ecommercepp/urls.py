@@ -7,9 +7,7 @@ urlpatterns = [
     path("ecommerce/customer/register", views.UserRegisterView.as_view()),
     path("ecommerce/product/", views.ListProducts.as_view()),
     path("ecommerce/product/pid/", views.DetailProducts.as_view()),
-    path(
-        "ecommerce/product/category/", views.DetailCategory.as_view()
-    ),
+    path("ecommerce/product/category/", views.DetailCategory.as_view()),
     path("ecommerce/cart/add", views.CartAddView.as_view()),
     path("ecommerce/cartitems/", views.DetailCart.as_view()),
     path("ecommerce/cartitems/delete", views.DeleteCartView.as_view()),

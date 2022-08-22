@@ -48,9 +48,7 @@ class BasicAuthentication(BaseAuthentication):
         user = authenticate(request=request, **credentials)
 
         if user is None:
-            raise exceptions.AuthenticationFailed(
-                "Invalid username or password"
-            )
+            raise exceptions.AuthenticationFailed("Invalid username or password")
         if not user.is_active:
             raise exceptions.AuthenticationFailed("User is inactive")
         return user, None

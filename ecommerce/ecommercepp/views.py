@@ -208,7 +208,10 @@ class CartAddView(generics.CreateAPIView):
                 if Cart.objects.filter(cust_id=cust_id).exists():
                     cart_value = Cart.objects.get(cust_id=cust_id)
                     if pid in cart_value.cart_item:
-                        qty_value = cart_value.cart_item[pid]["pqty"] + int(qty)
+                        try:
+                            qty_value = cart_value.cart_item[pid]["pqty"] + int(qty)
+                        except ValueError as exception:
+                            return Response(f"Value error: {exception}")
                         if qty_value > 0:
                             cart_value.cart_item[pid]["pqty"] = qty_value
                             cart_value.save()
@@ -221,7 +224,7 @@ class CartAddView(generics.CreateAPIView):
                                 return Response(
                                     "No items in the cart", status=status.HTTP_200_OK
                                 )
-                            return Response("No item", status=status.HTTP_200_OK)
+                            return Response("Item removed", status=status.HTTP_200_OK)
                     else:
                         if int(qty) <= 0:
                             return Response("Negative quantity")

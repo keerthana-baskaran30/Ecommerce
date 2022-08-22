@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ecommercepp', '0026_remove_seller_phone'),
+        ("ecommercepp", "0026_remove_seller_phone"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='seller',
-            name='phone',
-            field=models.CharField(default='0', max_length=10, unique=True),
+            model_name="seller",
+            name="phone",
+            field=models.CharField(default="0", max_length=10, unique=True),
             preserve_default=False,
         ),
     ]

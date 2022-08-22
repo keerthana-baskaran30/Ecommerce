@@ -10,7 +10,7 @@ from ecommercepp.models import Product, Cart, Customer, Seller
 class LoginViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "email","first_name"]
+        fields = ["id", "username", "email", "first_name"]
 
 
 # register
@@ -21,12 +21,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password]
     )
-    phone = serializers.CharField(
-        max_length=10, validators=[UniqueValidator(queryset=Customer.objects.all())]
-    )
-    phone = serializers.CharField(
-        max_length=10, validators=[UniqueValidator(queryset=Seller.objects.all())]
-    )
+
+    phone = serializers.CharField(max_length=10)
+
     sex = serializers.CharField(max_length=1)
     address = serializers.CharField(max_length=5000)
 
@@ -54,6 +51,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
 
+        # print(user)
         if self.context["role"] == "customer":
             Customer.objects.create(
                 auth_id=user,
@@ -71,30 +69,49 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
     def validate(self, attrs):
-        pattern = re.compile("^(\+\d{1,3}[- ]?)?\d{10}$")
+        pattern = re.compile("^([9876])[0-9]{9}$")
 
-        if not bool(
-            re.fullmatch("[A-Za-z]{2,25}( [A-Za-z]{2,25})?", attrs["first_name"])
-        ):
-            raise serializers.ValidationError("firstname field is invalid")
+        try:
+            if not bool(re.fullmatch("[A-Za-z]{2,25}", attrs["first_name"])):
+                raise serializers.ValidationError("firstname field is invalid")
 
-        if not bool(
-            re.fullmatch("[A-Za-z]{2,25}( [A-Za-z]{2,25})?", attrs["last_name"])
-        ):
-            raise serializers.ValidationError("lastname field is invalid")
+            if not bool(re.fullmatch("[A-Za-z]{2,25}", attrs["last_name"])):
+                raise serializers.ValidationError("lastname field is invalid")
 
-        if not pattern.match(attrs["phone"]):
-            raise serializers.ValidationError("Phone number is invalid")
+            if not bool(re.fullmatch("([a-zA-Z0-9._@-]{2,20})", attrs["username"])):
+                raise serializers.ValidationError("Enter a valid username")
+            if not bool(
+                re.fullmatch(
+                    r"([a-zA-Z0-9]{5,20})+@([a-zA-Z]{3,5})+\.([a-zA-Z\.]{3,10})$",
+                    attrs["email"],
+                )
+            ):
+                raise serializers.ValidationError("Enter a valid email")
 
-        if attrs["sex"].lower() not in "mf":
-            raise serializers.ValidationError(attrs["sex"].lower())
+            if self.context["role"] == "customer":
+                if Customer.objects.filter(phone=attrs["phone"]).exists():
+                    raise serializers.ValidationError("Phone number already exists.")
+                if not pattern.match(attrs["phone"]):
+                    raise serializers.ValidationError("Phone number is invalid.")
 
-        if not bool(re.fullmatch("^[a-zA-Z0-9\s.,/]+$", attrs["address"])):
-            raise serializers.ValidationError("Address field is invalid")
+            if self.context["role"] == "seller":
+                if Seller.objects.filter(phone=attrs["phone"]).exists():
+                    raise serializers.ValidationError("Phone number already exists.")
+                if not pattern.match(attrs["phone"]):
+                    raise serializers.ValidationError("Phone number is invalid.")
 
-        return attrs
+            if attrs["sex"].lower() not in "mf":
+                raise serializers.ValidationError("Field is invalid")
 
+            if not bool(re.fullmatch(r"^[a-zA-Z0-9\s.,/]+$", attrs["address"])):
+                raise serializers.ValidationError("Address field is invalid")
 
+            return attrs
+
+        except KeyError as e:
+            raise serializers.ValidationError(f"Key error : {e}")
+
+       
 # Displaying products
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -138,13 +155,13 @@ class SellerAddViewSerializer(serializers.ModelSerializer):
         if not bool(re.fullmatch("^[a-zA-Z0-9]+$", attrs["pid"])):
             raise serializers.ValidationError("PID is invalid")
 
-        if not bool(re.fullmatch("^[a-zA-Z0-9_.\s]+$", attrs["pname"])):
+        if not bool(re.fullmatch(r"^[a-zA-Z0-9_.\s]+$", attrs["pname"])):
             raise serializers.ValidationError("product name field is invalid")
 
-        if not bool(re.fullmatch("^[a-zA-Z0-9\s._:]+$", attrs["pdescription"])):
+        if not bool(re.fullmatch(r"^[a-zA-Z0-9\s._:]+$", attrs["pdescription"])):
             raise serializers.ValidationError(" Description is invalid")
 
-        if not bool(re.fullmatch("^[a-zA-Z0-9\s]+$", attrs["pcategory"])):
+        if not bool(re.fullmatch(r"^[a-zA-Z0-9\s]+$", attrs["pcategory"])):
             raise serializers.ValidationError("product category is invalid")
 
         return attrs

@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ecommercepp', '0030_rename_custid_cart_cust_id'),
+        ("ecommercepp", "0030_rename_custid_cart_cust_id"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='cart',
-            old_name='cartitem',
-            new_name='cart_item',
+            model_name="cart",
+            old_name="cartitem",
+            new_name="cart_item",
         ),
     ]
