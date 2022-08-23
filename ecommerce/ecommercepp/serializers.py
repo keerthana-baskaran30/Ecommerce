@@ -68,6 +68,34 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             )
         return user
 
+    # def create(self, validated_data):
+    #     if self.context["role"] == "customer":
+    #         user = Customer.objects.create(
+    #             first_name=validated_data["first_name"],
+    #             last_name=validated_data["last_name"],
+    #             username=validated_data["username"],
+    #             email=validated_data["email"],
+    #             phone=validated_data["phone"],
+    #             sex=validated_data["sex"],
+    #             address=validated_data["address"],
+    #         )
+    #         user.set_password(validated_data["password"])
+    #         user.save()
+
+    #     elif self.context["role"] == "seller":
+    #         user = Seller.objects.create(
+    #             first_name=validated_data["first_name"],
+    #             last_name=validated_data["last_name"],
+    #             username=validated_data["username"],
+    #             email=validated_data["email"],
+    #             phone=validated_data["phone"],
+    #             sex=validated_data["sex"],
+    #             address=validated_data["address"],
+    #         )
+    #         user.set_password(validated_data["password"])
+    #         user.save()
+    #     return user
+
     def validate(self, attrs):
         pattern = re.compile("^([9876])[0-9]{9}$")
 
@@ -140,7 +168,6 @@ class SellerAddViewSerializer(serializers.ModelSerializer):
         return pdt
 
     def update(self, instance, validated_data):
-        # print(validated_data)
         instance.pid = validated_data.get("pid", instance.pid)
         instance.pname = validated_data.get("pname", instance.pname)
         instance.pdescription = validated_data.get(
@@ -158,7 +185,7 @@ class SellerAddViewSerializer(serializers.ModelSerializer):
         if not bool(re.fullmatch(r"^[a-zA-Z0-9_.\s]+$", attrs["pname"])):
             raise serializers.ValidationError("product name field is invalid")
 
-        if not bool(re.fullmatch(r"^[a-zA-Z0-9\s._:]+$", attrs["pdescription"])):
+        if not bool(re.fullmatch(r"^[a-zA-Z0-9\s._:;<>,/()${}]+$", attrs["pdescription"])):
             raise serializers.ValidationError(" Description is invalid")
 
         if not bool(re.fullmatch(r"^[a-zA-Z0-9\s]+$", attrs["pcategory"])):

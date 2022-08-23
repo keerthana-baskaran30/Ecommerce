@@ -297,6 +297,8 @@ class DeleteCartView(generics.DestroyAPIView):
                     return Response(
                         "Not found in the cart", status=status.HTTP_404_NOT_FOUND
                     )
+                return Response("Cart is Empty", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Invalid product ID", status=status.HTTP_404_NOT_FOUND )
         return Response(
             "invalid product id or customer id", status=status.HTTP_400_BAD_REQUEST
         )

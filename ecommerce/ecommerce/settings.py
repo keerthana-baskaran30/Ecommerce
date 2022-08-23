@@ -84,7 +84,7 @@ DATABASES = {
     # }
     "default": {
         "ENGINE": "mysql.connector.django",
-        "NAME": "ecommerce",
+        "NAME": "ecommerceapi",
         "USER": "root",
         "PASSWORD": "Aspire@123",
         "HOST": "localhost",
